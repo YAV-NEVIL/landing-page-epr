@@ -62,37 +62,37 @@ export default function App() {
   // Tentative de lancement automatique dès l'arrivée du visiteur
   useEffect(() => {
     const startAudioPlay = () => {
-      if (audioRef.current) {
-        audioRef.current.play()
-          .then(() => {
-            setIsPlayingAudio(true);
-            setHasStartedAudio(true);
-          })
-          .catch((err) => {
-            // Blocage de sécurité standard du navigateur sans interaction préalable
-            console.log("Lecture audio automatique en attente du premier contact :", err);
-          });
+      if (audioRef.current && !isPlayingAudio) {
+        const promise = audioRef.current.play();
+        if (promise !== undefined) {
+          promise
+            .then(() => {
+              setIsPlayingAudio(true);
+              setHasStartedAudio(true);
+              // Succès : retrait des écouteurs de repli
+              ['click', 'touchend', 'pointerdown'].forEach((evt) => {
+                window.removeEventListener(evt, startAudioPlay);
+              });
+            })
+            .catch((err) => {
+              // Politique de blocage navigateur : reste en attente du premier tap utilisateur
+              console.log("Lecture audio différée (en attente d'interaction utilisateur) :", err);
+            });
+        }
       }
     };
 
     // 1. Essai immédiat au chargement du composant
     startAudioPlay();
 
-    // 2. Repli : dès la première action physique de l'utilisateur (clic, scroll, touch)
-    const handleFirstInteraction = () => {
-      startAudioPlay();
-      ['click', 'touchstart', 'scroll', 'keydown'].forEach((evt) => {
-        window.removeEventListener(evt, handleFirstInteraction);
-      });
-    };
-
-    ['click', 'touchstart', 'scroll', 'keydown'].forEach((evt) => {
-      window.addEventListener(evt, handleFirstInteraction, { once: true, passive: true });
+    // 2. Repli : dès que l'utilisateur touche ou clique l'écran (sans scroll qui n'est pas un geste valide)
+    ['click', 'touchend', 'pointerdown'].forEach((evt) => {
+      window.addEventListener(evt, startAudioPlay, { passive: true });
     });
 
     return () => {
-      ['click', 'touchstart', 'scroll', 'keydown'].forEach((evt) => {
-        window.removeEventListener(evt, handleFirstInteraction);
+      ['click', 'touchend', 'pointerdown'].forEach((evt) => {
+        window.removeEventListener(evt, startAudioPlay);
       });
     };
   }, []);
@@ -495,7 +495,7 @@ export default function App() {
   const CHARIOW_URL = "https://zpkvlptl.mychariow.shop/la-methode-epr";
 
   return (
-    <div ref={mainRef} className="relative min-h-screen bg-[#0D0D12] text-[#FAF8F5] font-sans selection:bg-[#F5C518] selection:text-[#0D0D12]">
+    <div ref={mainRef} className="relative min-h-screen bg-[#0D0D12] text-[#FAF8F5] font-sans selection:bg-[#F5C518] selection:text-[#0D0D12] overflow-x-hidden w-full max-w-full">
       
       {/* BALISE AUDIO RÉELLE (Voix Studio Haute Définition) */}
       <audio 
@@ -577,9 +577,9 @@ export default function App() {
       {/* B. SECTION HERO — L'ENTREPRENEUR & FEUILLES VOLANTES */}
       <section 
         ref={heroRef}
-        className="relative min-h-[100dvh] w-full flex flex-col justify-center pt-32 pb-20 px-6 sm:px-12 lg:px-20 overflow-hidden"
+        className="relative min-h-[100dvh] w-full flex flex-col justify-center pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-12 lg:px-20 overflow-hidden max-w-full"
       >
-        <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden max-w-full">
           <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[140px] pointer-events-none animate-pulse-glow"></div>
           <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-[#4A0E17]/25 rounded-full blur-[160px] pointer-events-none"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0D0D12]/40 to-[#0D0D12]"></div>
@@ -624,6 +624,15 @@ export default function App() {
                 </span>
               </button>
 
+              <button
+                type="button"
+                onClick={toggleAudioPlay}
+                className="px-6 py-4 rounded-2xl bg-gold/15 hover:bg-gold/25 text-gold font-display font-semibold text-xs tracking-wider border border-gold/40 hover:border-gold transition-all flex items-center justify-center gap-2 text-center cursor-pointer shadow-gold-sm"
+              >
+                <Volume2 className={`w-4 h-4 shrink-0 ${isPlayingAudio ? "text-emerald-400 animate-pulse" : "text-gold"}`} />
+                <span>{isPlayingAudio ? "Pause Note Vocale (48s)" : "Écouter la Note Vocale (48s) ▶"}</span>
+              </button>
+
               <a
                 href="#outils-en-action"
                 className="px-6 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-display font-semibold text-xs tracking-wider border border-white/10 hover:border-gold/30 transition-all flex items-center justify-center gap-2 text-center"
@@ -653,10 +662,10 @@ export default function App() {
           <div className="lg:col-span-5 relative flex items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-tr from-gold/20 via-amber-600/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative w-full max-w-md perspective-1000">
+            <div className="relative w-full max-w-md mx-auto">
 
-              {/* FEUILLE VOLANTE 1 (Haut Gauche) */}
-              <div className="absolute -top-10 -left-6 sm:-left-10 z-20 animate-float-slow w-48 sm:w-56 p-3.5 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform">
+              {/* FEUILLE VOLANTE 1 (Haut Gauche) - Masquée sur mobile pour éliminer tout débordement */}
+              <div className="hidden lg:block absolute -top-10 -left-6 sm:-left-10 z-20 animate-float-slow w-48 sm:w-56 p-3.5 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform">
                 <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[9px] font-mono text-slate-400">
                   <div className="flex items-center gap-1.5 text-blue-400 font-bold">
                     <FileText className="w-3 h-3" />
@@ -681,8 +690,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* FEUILLE VOLANTE 2 (Haut Droite) */}
-              <div className="absolute -top-8 -right-4 sm:-right-8 z-20 animate-float-reverse w-48 sm:w-56 p-3.5 rounded-2xl bg-[#161622]/95 border border-gold/30 backdrop-blur-xl shadow-2xl transform rotate-6 hover:rotate-0 transition-transform">
+              {/* FEUILLE VOLANTE 2 (Haut Droite) - Masquée sur mobile pour éliminer tout débordement */}
+              <div className="hidden lg:block absolute -top-8 -right-4 sm:-right-8 z-20 animate-float-reverse w-48 sm:w-56 p-3.5 rounded-2xl bg-[#161622]/95 border border-gold/30 backdrop-blur-xl shadow-2xl transform rotate-6 hover:rotate-0 transition-transform">
                 <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[9px] font-mono text-slate-400">
                   <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                     <FileSpreadsheet className="w-3 h-3" />
@@ -735,8 +744,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* FEUILLE VOLANTE 3 (Bas Gauche) */}
-              <div className="absolute -bottom-6 -left-4 sm:-left-8 z-20 animate-float-soft w-48 sm:w-52 p-3 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform">
+              {/* FEUILLE VOLANTE 3 (Bas Gauche) - Masquée sur mobile pour éliminer tout débordement */}
+              <div className="hidden lg:block absolute -bottom-6 -left-4 sm:-left-8 z-20 animate-float-soft w-48 sm:w-52 p-3 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform">
                 <div className="flex items-center gap-1.5 text-[9px] font-mono text-gold font-bold mb-1">
                   <ShieldCheck className="w-3 h-3" />
                   <span>CONTRAT SOUS-TRAITANCE</span>
@@ -748,8 +757,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* FEUILLE VOLANTE 4 (Bas Droite) */}
-              <div className="absolute -bottom-8 -right-4 sm:-right-6 z-20 animate-float-slow w-48 sm:w-56 p-3 rounded-2xl bg-[#1A1A26]/95 border border-gold/40 backdrop-blur-xl shadow-gold-sm transform -rotate-4 hover:rotate-0 transition-transform flex items-center gap-3">
+              {/* FEUILLE VOLANTE 4 (Bas Droite) - Masquée sur mobile pour éliminer tout débordement */}
+              <div className="hidden lg:block absolute -bottom-8 -right-4 sm:-right-6 z-20 animate-float-slow w-48 sm:w-56 p-3 rounded-2xl bg-[#1A1A26]/95 border border-gold/40 backdrop-blur-xl shadow-gold-sm transform -rotate-4 hover:rotate-0 transition-transform flex items-center gap-3">
                 <img 
                   src="./assets/mockup-pack-3d.png" 
                   alt="Pack 3D Méthode EPR" 
@@ -761,6 +770,33 @@ export default function App() {
                     65 Outils Clé en Main
                   </p>
                   <p className="text-[8px] font-mono text-emerald-400">ZIP Téléchargeable</p>
+                </div>
+              </div>
+
+              {/* BADGES RECADRÉS FLUIDES POUR MOBILE (< 1024px) - 100% dans l'écran, 0 débordement */}
+              <div className="lg:hidden grid grid-cols-2 gap-2.5 mt-4 w-full">
+                <div className="p-3 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-md flex flex-col justify-between">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
+                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    <span>CALCULATEUR K</span>
+                  </div>
+                  <div className="mt-1 flex items-baseline justify-between">
+                    <span className="text-[10px] font-mono text-slate-300">Frais K :</span>
+                    <span className="text-xs font-mono font-bold text-gold">1.38</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-emerald-400 mt-0.5">Marge nette +24%</span>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-[#161622]/95 border border-gold/30 backdrop-blur-md flex flex-col justify-between">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-gold font-bold">
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>65 OUTILS INCLUS</span>
+                  </div>
+                  <div className="mt-1 flex items-baseline justify-between">
+                    <span className="text-[10px] font-mono text-slate-300">Pack Pro :</span>
+                    <span className="text-xs font-mono font-bold text-white">ZIP Prêt</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-gold mt-0.5">Excel & Word</span>
                 </div>
               </div>
 
@@ -932,13 +968,19 @@ export default function App() {
                   </div>
 
                   {/* Tableau du devis */}
-                  <div className="rounded-2xl bg-[#09090D] border border-white/10 overflow-x-auto shadow-inner">
+                  <div className="rounded-2xl bg-[#09090D] border border-white/10 overflow-hidden shadow-inner w-full max-w-full">
                     <div className="flex items-center gap-3 px-4 py-2 border-b border-white/10 bg-[#12121A] text-xs font-mono text-slate-400">
                       <span className="text-gold font-bold">fx</span>
-                      <span className="text-white">=ARRONDI(SOMME(E2:E5) * Coefficient_K_1.38 ; -2)</span>
+                      <span className="text-white truncate">=ARRONDI(SOMME(E2:E5) * Coefficient_K_1.38 ; -2)</span>
                     </div>
 
-                    <table className="w-full text-left font-mono text-xs border-collapse min-w-[650px]">
+                    <div className="lg:hidden px-3 py-1.5 bg-amber-500/10 border-b border-amber-500/20 text-[10px] font-mono text-amber-300 flex items-center justify-between">
+                      <span>👉 Glissez horizontalement pour voir toutes les colonnes</span>
+                      <span className="text-gold font-bold">6 colonnes</span>
+                    </div>
+
+                    <div className="overflow-x-auto w-full max-w-full">
+                      <table className="w-full text-left font-mono text-xs border-collapse min-w-[620px]">
                       <thead>
                         <tr className="bg-[#181824] text-slate-400 border-b border-white/10">
                           <th className="py-2.5 px-3 border-r border-white/5 w-12 text-center text-slate-600">#</th>
@@ -984,6 +1026,7 @@ export default function App() {
                         </tr>
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1010,8 +1053,14 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-[#09090D] border border-white/10 overflow-x-auto shadow-inner">
-                    <table className="w-full text-left font-mono text-xs border-collapse min-w-[700px]">
+                  <div className="rounded-2xl bg-[#09090D] border border-white/10 overflow-hidden shadow-inner w-full max-w-full">
+                    <div className="lg:hidden px-3 py-1.5 bg-amber-500/10 border-b border-amber-500/20 text-[10px] font-mono text-amber-300 flex items-center justify-between">
+                      <span>👉 Glissez horizontalement pour voir toutes les colonnes</span>
+                      <span className="text-gold font-bold">6 colonnes</span>
+                    </div>
+
+                    <div className="overflow-x-auto w-full max-w-full">
+                      <table className="w-full text-left font-mono text-xs border-collapse min-w-[680px]">
                       <thead>
                         <tr className="bg-[#181824] text-slate-400 border-b border-white/10">
                           <th className="py-2.5 px-4 text-slate-300">CLIENT / CHANTIER</th>
@@ -1049,6 +1098,7 @@ export default function App() {
                         </tr>
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1988,58 +2038,74 @@ export default function App() {
         </div>
       </footer>
 
-      {/* LECTEUR AUDIO FLOTTANT DISCRET & INTERACTIF (Visualisation de la lecture automatique) */}
-      <div className="fixed bottom-5 right-5 z-40 flex items-center gap-3 p-2 sm:p-2.5 rounded-full bg-[#161622]/95 border border-gold/40 shadow-2xl backdrop-blur-xl text-xs font-mono transition-transform hover:scale-105">
+      {/* BANDEAU AUDIO FLOTTANT HAUTE FIDÉLITÉ (Mobile-first, 100% adapté aux écrans 320px-450px) */}
+      <aside 
+        aria-label="Lecteur audio flottant de la note vocale"
+        onClick={toggleAudioPlay}
+        className={`fixed bottom-3 sm:bottom-6 left-3 right-3 sm:left-auto sm:right-6 z-40 max-w-sm sm:max-w-md mx-auto sm:mx-0 flex items-center justify-between gap-2.5 p-2 sm:p-2.5 rounded-full bg-[#161622]/95 border shadow-2xl backdrop-blur-xl text-xs font-mono transition-all cursor-pointer ${
+          isPlayingAudio 
+            ? "border-emerald-500/50 shadow-emerald-500/10" 
+            : "border-gold/50 shadow-gold-sm hover:scale-[1.02]"
+        }`}
+      >
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <div className="relative shrink-0">
+            <img 
+              src="./assets/portrait-electricien-ingenieur-hd.jpg" 
+              alt="Ir. Jean Philippe" 
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-gold"
+            />
+            <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border border-[#0D0D12] ${
+              isPlayingAudio ? "bg-emerald-500 animate-pulse" : "bg-gold"
+            }`}></span>
+          </div>
+
+          <div className="space-y-0.5 min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold text-[10px] sm:text-xs text-white truncate">
+                {isPlayingAudio ? "Note Vocale en cours" : "Note Vocale de l'Ingénieur"}
+              </span>
+              <span className="text-[9px] text-gold font-mono shrink-0">
+                {formatAudioTime(audioCurrentTime)} / {formatAudioTime(audioDuration)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-0.5 h-2.5">
+              {[30, 70, 45, 90, 50, 100, 60, 80, 40, 75, 55, 85].map((h, i) => (
+                <span
+                  key={i}
+                  className={`w-0.5 rounded-full transition-all duration-200 ${
+                    isPlayingAudio ? "bg-gold" : "bg-slate-600"
+                  }`}
+                  style={{
+                    height: isPlayingAudio ? `${Math.max(25, Math.sin((audioCurrentTime * 6) + i) * 80 + 20)}%` : '30%'
+                  }}
+                ></span>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <button
           type="button"
-          onClick={toggleAudioPlay}
-          className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 transition-transform cursor-pointer shadow-md ${
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleAudioPlay();
+          }}
+          className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 transition-transform cursor-pointer shadow-md ${
             isPlayingAudio 
-              ? "bg-emerald-500 text-white shadow-emerald-500/30 animate-pulse" 
+              ? "bg-emerald-500 text-white shadow-emerald-500/30" 
               : "bg-gold text-[#0D0D12] hover:scale-105"
           }`}
           title={isPlayingAudio ? "Mettre en pause la note vocale" : "Écouter la note vocale de l'Ir. Jean Philippe"}
         >
           {isPlayingAudio ? (
-            <Pause className="w-4 h-4 fill-current" />
+            <Pause className="w-3.5 h-3.5 fill-current" />
           ) : (
-            <Play className="w-4 h-4 fill-current ml-0.5" />
+            <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
           )}
         </button>
-
-        <div className="space-y-0.5 max-w-[170px] sm:max-w-[220px]">
-          <div className="flex items-center gap-1.5">
-            <span className={`w-2 h-2 rounded-full ${isPlayingAudio ? "bg-emerald-400 animate-ping" : "bg-gold"}`}></span>
-            <span className="font-bold text-[10px] sm:text-xs text-white truncate">
-              {isPlayingAudio ? "Note Vocale en cours" : "Note Vocale de l'Ingénieur"}
-            </span>
-            <span className="text-[9px] text-slate-400 hidden sm:inline">
-              {formatAudioTime(audioCurrentTime)}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-0.5 h-3">
-            {[30, 70, 45, 90, 50, 100, 60, 80, 40].map((h, i) => (
-              <span
-                key={i}
-                className={`w-0.5 rounded-full transition-all duration-200 ${
-                  isPlayingAudio ? "bg-gold" : "bg-slate-600"
-                }`}
-                style={{
-                  height: isPlayingAudio ? `${Math.max(25, Math.sin((audioCurrentTime * 6) + i) * 80 + 20)}%` : '30%'
-                }}
-              ></span>
-            ))}
-          </div>
-        </div>
-
-        <a 
-          href="#note-vocale" 
-          className="hidden sm:inline-block px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 text-slate-300 hover:text-gold border border-white/10 text-[10px] transition-colors"
-        >
-          Écouter
-        </a>
-      </div>
+      </aside>
 
       {/* MODALE DE PAIEMENT EXPRESS CHARIOW FLOTTANTE (SUR LA MÊME PAGE) */}
       <CheckoutModal 
