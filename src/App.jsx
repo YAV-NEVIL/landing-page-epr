@@ -331,6 +331,85 @@ export default function App() {
   const [orderPhone, setOrderPhone] = useState('');
   const [orderEmail, setOrderEmail] = useState('');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('wave');
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+
+  // Validation obligatoire des coordonnées avant redirection Chariow
+  const validateOrderForm = () => {
+    const errors = {};
+    const cleanName = orderClientName.trim();
+    const cleanPhone = orderPhone.trim();
+    const cleanEmail = orderEmail.trim();
+
+    if (!cleanName) {
+      errors.name = "Veuillez renseigner votre nom complet ou le nom de votre entreprise.";
+    } else if (cleanName.length < 2) {
+      errors.name = "Le nom doit comporter au moins 2 caractères.";
+    }
+
+    if (!cleanPhone) {
+      errors.phone = "Veuillez renseigner votre numéro WhatsApp / téléphone.";
+    } else {
+      const digitsOnly = cleanPhone.replace(/[^0-9]/g, '');
+      if (digitsOnly.length < 8) {
+        errors.phone = "Veuillez renseigner un numéro valide (minimum 8 chiffres).";
+      }
+    }
+
+    if (!cleanEmail) {
+      errors.email = "Veuillez renseigner votre adresse email pour recevoir le lien du pack.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      errors.email = "Format d'email invalide (ex: contact@entreprise.com).";
+    }
+
+    return errors;
+  };
+
+  // Traitement de la commande avec vérification des champs
+  const handleOrderSubmit = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (isSubmittingOrder) return;
+
+    const errors = validateOrderForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      
+      // Auto-focus sur le premier champ invalide
+      if (errors.name) {
+        const el = document.getElementById('order-client-name');
+        el?.focus();
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (errors.phone) {
+        const el = document.getElementById('order-phone');
+        el?.focus();
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else if (errors.email) {
+        const el = document.getElementById('order-email');
+        el?.focus();
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    // Tout est valide : déclenchement du paiement et transmission des coordonnées
+    setFormErrors({});
+    setIsSubmittingOrder(true);
+    handlePurchaseClick();
+
+    // Construction de l'URL sécurisée Chariow avec les données saisies
+    const baseUrl = "https://zpkvlptl.mychariow.shop/la-methode-epr/checkout";
+    const params = new URLSearchParams();
+    if (orderClientName.trim()) params.append("name", orderClientName.trim());
+    if (orderEmail.trim()) params.append("email", orderEmail.trim());
+    if (orderPhone.trim()) params.append("phone", orderPhone.trim());
+    if (selectedPaymentMethod) params.append("payment_method", selectedPaymentMethod);
+    const targetUrl = `${baseUrl}?${params.toString()}`;
+
+    // Redirection fluide après un court retour visuel
+    setTimeout(() => {
+      window.location.href = targetUrl;
+    }, 600);
+  };
 
   // Redirection fluide vers la section paiement 100% dans la même page
   const handleGoToPayment = () => {
@@ -1689,62 +1768,136 @@ export default function App() {
               </div>
             </div>
 
-            {/* Formulaire des coordonnées client */}
+            {/* Formulaire des coordonnées client avec validation obligatoire */}
             <div className="space-y-4 pt-2">
-              <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
-                2. Vos coordonnées de livraison numérique :
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
+                  2. Vos coordonnées de livraison numérique :
+                </label>
+                <span className="text-[10px] font-mono text-amber-400/90 font-medium">
+                  * Tous les champs sont requis
+                </span>
+              </div>
+
+              {/* Message d'alerte global si validation échouée */}
+              {Object.keys(formErrors).length > 0 && (
+                <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/50 text-red-300 text-xs flex items-center gap-2.5 animate-shake">
+                  <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                  <span>Veuillez renseigner vos coordonnées obligatoires ci-dessous avant de procéder au règlement.</span>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <span className="text-xs text-slate-300 font-medium">Nom complet / Entreprise</span>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-300 font-medium">Nom complet / Entreprise *</span>
+                  </div>
                   <input
+                    id="order-client-name"
                     type="text"
                     value={orderClientName}
-                    onChange={(e) => setOrderClientName(e.target.value)}
+                    onChange={(e) => {
+                      setOrderClientName(e.target.value);
+                      if (formErrors.name) {
+                        setFormErrors(prev => ({ ...prev, name: null }));
+                      }
+                    }}
                     placeholder="Ex: Kouamé Jean (SARL Élec)"
-                    className="w-full px-4 py-3 rounded-xl bg-[#0D0D12] border border-white/10 text-white placeholder-slate-600 focus:border-gold outline-none text-xs font-mono"
+                    className={`w-full px-4 py-3 rounded-xl border text-white placeholder-slate-600 outline-none text-xs font-mono transition-all ${
+                      formErrors.name
+                        ? "border-red-500 bg-red-950/20 focus:border-red-400 animate-shake"
+                        : "border-white/10 bg-[#0D0D12] focus:border-gold"
+                    }`}
                   />
+                  {formErrors.name && (
+                    <p className="text-[11px] text-red-400 font-mono flex items-center gap-1.5 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{formErrors.name}</span>
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-xs text-slate-300 font-medium">Numéro WhatsApp / Téléphone</span>
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-300 font-medium">Numéro WhatsApp / Téléphone *</span>
+                  </div>
                   <input
+                    id="order-phone"
                     type="tel"
                     value={orderPhone}
-                    onChange={(e) => setOrderPhone(e.target.value)}
+                    onChange={(e) => {
+                      setOrderPhone(e.target.value);
+                      if (formErrors.phone) {
+                        setFormErrors(prev => ({ ...prev, phone: null }));
+                      }
+                    }}
                     placeholder="+225 07 00 00 00 00"
-                    className="w-full px-4 py-3 rounded-xl bg-[#0D0D12] border border-white/10 text-white placeholder-slate-600 focus:border-gold outline-none text-xs font-mono"
+                    className={`w-full px-4 py-3 rounded-xl border text-white placeholder-slate-600 outline-none text-xs font-mono transition-all ${
+                      formErrors.phone
+                        ? "border-red-500 bg-red-950/20 focus:border-red-400 animate-shake"
+                        : "border-white/10 bg-[#0D0D12] focus:border-gold"
+                    }`}
                   />
+                  {formErrors.phone && (
+                    <p className="text-[11px] text-red-400 font-mono flex items-center gap-1.5 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      <span>{formErrors.phone}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-1">
-                <span className="text-xs text-slate-300 font-medium">Adresse email (pour recevoir le lien de téléchargement)</span>
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-slate-300 font-medium">Adresse email (réception du pack et facture) *</span>
+                </div>
                 <input
+                  id="order-email"
                   type="email"
                   value={orderEmail}
-                  onChange={(e) => setOrderEmail(e.target.value)}
+                  onChange={(e) => {
+                    setOrderEmail(e.target.value);
+                    if (formErrors.email) {
+                      setFormErrors(prev => ({ ...prev, email: null }));
+                    }
+                  }}
                   placeholder="votre.email@exemple.com"
-                  className="w-full px-4 py-3 rounded-xl bg-[#0D0D12] border border-white/10 text-white placeholder-slate-600 focus:border-gold outline-none text-xs font-mono"
+                  className={`w-full px-4 py-3 rounded-xl border text-white placeholder-slate-600 outline-none text-xs font-mono transition-all ${
+                    formErrors.email
+                      ? "border-red-500 bg-red-950/20 focus:border-red-400 animate-shake"
+                      : "border-white/10 bg-[#0D0D12] focus:border-gold"
+                  }`}
                 />
+                {formErrors.email && (
+                  <p className="text-[11px] text-red-400 font-mono flex items-center gap-1.5 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>{formErrors.email}</span>
+                  </p>
+                )}
               </div>
             </div>
 
-            {/* Bouton d'action principal */}
+            {/* Bouton d'action principal connecté à la validation */}
             <div className="pt-2 space-y-3">
               <button
+                id="btn-valider-paiement-chariow"
                 type="button"
-                onClick={() => {
-                  handlePurchaseClick();
-                  // Redirection in-place sans nouvel onglet externe
-                  window.location.href = "https://zpkvlptl.mychariow.shop/la-methode-epr/checkout";
-                }}
-                className="w-full py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-gold via-yellow-400 to-amber-500 text-[#0D0D12] font-display font-black text-sm sm:text-base tracking-wide shadow-gold-glow flex items-center justify-center gap-3 cursor-pointer hover:scale-[1.01] transition-transform"
+                onClick={handleOrderSubmit}
+                disabled={isSubmittingOrder}
+                className="w-full py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-gold via-yellow-400 to-amber-500 text-[#0D0D12] font-display font-black text-sm sm:text-base tracking-wide shadow-gold-glow flex items-center justify-center gap-3 cursor-pointer hover:scale-[1.01] transition-transform disabled:opacity-80 disabled:cursor-wait"
               >
-                <Lock className="w-4 h-4 stroke-[2.5]" />
-                <span>Valider le Paiement Chariow ({priceTiers[activePriceIndex].priceFCFA})</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                {isSubmittingOrder ? (
+                  <>
+                    <RotateCw className="w-5 h-5 animate-spin" />
+                    <span>Connexion sécurisée à Chariow en cours...</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4 stroke-[2.5]" />
+                    <span>Valider le Paiement Chariow ({priceTiers[activePriceIndex].priceFCFA})</span>
+                    <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                  </>
+                )}
               </button>
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-slate-400 text-center sm:text-left">
@@ -1893,9 +2046,26 @@ export default function App() {
         isOpen={isCheckoutModalOpen}
         onClose={() => setIsCheckoutModalOpen(false)}
         selectedTier={priceTiers[activePriceIndex]}
-        onConfirmOrder={() => {
+        orderClientName={orderClientName}
+        setOrderClientName={setOrderClientName}
+        orderPhone={orderPhone}
+        setOrderPhone={setOrderPhone}
+        orderEmail={orderEmail}
+        setOrderEmail={setOrderEmail}
+        selectedPaymentMethod={selectedPaymentMethod}
+        setSelectedPaymentMethod={setSelectedPaymentMethod}
+        onConfirmOrder={(clientData) => {
           handlePurchaseClick();
-          window.location.href = "https://zpkvlptl.mychariow.shop/la-methode-epr/checkout";
+          const baseUrl = "https://zpkvlptl.mychariow.shop/la-methode-epr/checkout";
+          const params = new URLSearchParams();
+          if (clientData?.name) params.append("name", clientData.name);
+          if (clientData?.email) params.append("email", clientData.email);
+          if (clientData?.phone) params.append("phone", clientData.phone);
+          if (clientData?.paymentMethod) params.append("payment_method", clientData.paymentMethod);
+          const targetUrl = `${baseUrl}?${params.toString()}`;
+          setTimeout(() => {
+            window.location.href = targetUrl;
+          }, 400);
         }}
       />
 
