@@ -98,10 +98,10 @@ export default function CheckoutModal({ isOpen, onClose, selectedTier, onConfirm
           {/* Fiche récapitulative du produit */}
           <div className="p-4 rounded-2xl bg-[#0D0D12] border border-gold/30 flex gap-4 items-center">
             <img 
-              src="/assets/mockup-pack-3d.png" 
+              src="./assets/mockup-pack-3d.png" 
               alt="Pack Système EPR" 
               className="w-20 h-20 object-contain shrink-0 filter drop-shadow-md"
-              onError={(e) => { e.currentTarget.src = "/assets/portrait-electricien-ingenieur-hd.jpg"; }}
+              onError={(e) => { e.currentTarget.src = "./assets/portrait-electricien-ingenieur-hd.jpg"; }}
             />
             <div className="space-y-1 min-w-0 flex-1">
               <div className="flex items-center gap-2">

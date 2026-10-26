@@ -421,7 +421,7 @@ export default function App() {
       {/* BALISE AUDIO RÉELLE (Voix Studio Haute Définition) */}
       <audio 
         ref={audioRef}
-        src="/assets/note-vocale-jean-philippe.mp3"
+        src="./assets/note-vocale-jean-philippe.mp3"
         preload="auto"
         autoPlay
         onTimeUpdate={handleAudioTimeUpdate}
@@ -634,7 +634,7 @@ export default function App() {
               <div className="relative z-10 rounded-[3rem] p-2.5 bg-gradient-to-b from-gold/40 via-white/10 to-transparent border-2 border-gold/30 shadow-2xl shadow-black/80 overflow-hidden group">
                 <div className="relative rounded-[2.5rem] overflow-hidden bg-[#161622] aspect-[4/5] sm:aspect-[3/4]">
                   <img 
-                    src="/assets/portrait-electricien-ingenieur-hd.jpg" 
+                    src="./assets/portrait-electricien-ingenieur-hd.jpg" 
                     alt="Ir. Jean Philippe - Entrepreneur & Ingénieur Méthode EPR" 
                     className="w-full h-full object-cover object-top filter brightness-105 contrast-110 group-hover:scale-105 transition-transform duration-700"
                   />
@@ -672,7 +672,7 @@ export default function App() {
               {/* FEUILLE VOLANTE 4 (Bas Droite) */}
               <div className="absolute -bottom-8 -right-4 sm:-right-6 z-20 animate-float-slow w-48 sm:w-56 p-3 rounded-2xl bg-[#1A1A26]/95 border border-gold/40 backdrop-blur-xl shadow-gold-sm transform -rotate-4 hover:rotate-0 transition-transform flex items-center gap-3">
                 <img 
-                  src="/assets/mockup-pack-3d.png" 
+                  src="./assets/mockup-pack-3d.png" 
                   alt="Pack 3D Méthode EPR" 
                   className="w-12 h-12 object-contain shrink-0 filter drop-shadow-md"
                 />
@@ -1157,7 +1157,7 @@ export default function App() {
           <div className="flex items-center gap-5">
             <div className="relative">
               <img 
-                src="/assets/portrait-electricien-ingenieur-hd.jpg" 
+                src="./assets/portrait-electricien-ingenieur-hd.jpg" 
                 alt="Ir. Jean Philippe" 
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-gold shadow-md"
               />
@@ -1561,10 +1561,10 @@ export default function App() {
           <div className="lg:col-span-5 bg-[#161622] border border-white/15 rounded-[2.5rem] p-6 sm:p-8 space-y-6 shadow-2xl">
             <div className="flex items-center gap-3 pb-4 border-b border-white/10">
               <img 
-                src="/assets/mockup-pack-3d.png" 
+                src="./assets/mockup-pack-3d.png" 
                 alt="Pack Système EPR" 
                 className="w-16 h-16 object-contain filter drop-shadow-md shrink-0"
-                onError={(e) => { e.currentTarget.src = "/assets/portrait-electricien-ingenieur-hd.jpg"; }}
+                onError={(e) => { e.currentTarget.src = "./assets/portrait-electricien-ingenieur-hd.jpg"; }}
               />
               <div className="min-w-0">
                 <span className="font-mono text-[9px] text-gold font-bold uppercase tracking-wider block">
