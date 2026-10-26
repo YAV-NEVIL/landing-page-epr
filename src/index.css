@@ -1,0 +1,275 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    background-color: #0D0D12;
+  }
+
+  body {
+    background-color: #0D0D12;
+    color: #FAF8F5;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+}
+
+/* Global SVG Noise Overlay (<feTurbulence> at 0.05 opacity) */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+}
+
+/* 3D Perspective Containers */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
+.perspective-2000 {
+  perspective: 2000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* 360 Rotation Keyframe & Animation */
+@keyframes spin360 {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.animate-spin-360 {
+  animation: spin360 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Magnetic Button Feel & Slidable Layer Transitions */
+.btn-magnetic {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateZ(0);
+}
+
+.btn-magnetic:hover {
+  transform: scale(1.03);
+}
+
+.btn-magnetic .slide-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+}
+
+.btn-magnetic:hover .slide-layer {
+  transform: translateY(0);
+}
+
+/* Interactive link lift */
+.link-hover-lift {
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.2s ease;
+}
+
+.link-hover-lift:hover {
+  transform: translateY(-1px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0D0D12;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A35;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #F5C518;
+}
+
+/* Pulse animation utility */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.04);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* Floating sheets animations */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1.5deg);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(12px) rotate(-1.5deg);
+  }
+}
+
+@keyframes floatSoft {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.02);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 7s ease-in-out infinite;
+}
+
+.animate-float-soft {
+  animation: floatSoft 5s ease-in-out infinite;
+}
+
+/* Laser scan animation */
+@keyframes laserScan {
+  0% {
+    top: 0%;
+    opacity: 0.3;
+  }
+  50% {
+    top: 100%;
+    opacity: 0.9;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.3;
+  }
+}
+
+.animate-laser {
+  animation: laserScan 3s linear infinite;
+}
+
+/* ==========================================================
+   CARROUSEL DE PRIX AU MÊME NIVEAU & ÉVOLUTION DU PRIX
+   ========================================================== */
+.pricing-timeline-track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.pricing-timeline-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #F5C518, #FFD700);
+  border-radius: 9999px;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px rgba(245, 197, 24, 0.6);
+}
+
+.price-morph-anim {
+  animation: pricePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pricePop {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================
+   TUNNEL DE PAIEMENT CHARIOW INTÉGRÉ & MODALE EXPRESS
+   ========================================================== */
+.checkout-modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(4, 6, 12, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.checkout-modal-container {
+  width: 100%;
+  max-width: 640px;
+  background: #11111A;
+  border: 1.5px solid rgba(245, 197, 24, 0.4);
+  border-radius: 2rem;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.9), 0 0 50px rgba(245, 197, 24, 0.15);
+  overflow: hidden;
+  position: relative;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
