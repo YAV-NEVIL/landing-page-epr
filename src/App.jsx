@@ -658,69 +658,69 @@ export default function App() {
             </div>
           </div>
 
-          {/* DROITE : L'Entrepreneur en Photo entouré de ses Feuilles en Lévitation */}
-          <div className="lg:col-span-5 relative flex items-center justify-center">
+          {/* DROITE : L'Entrepreneur en Photo entouré de ses Feuilles en Lévitation (Design Unifié Mobile & Desktop) */}
+          <div className="lg:col-span-5 relative flex items-center justify-center my-6 lg:my-0">
             <div className="absolute inset-0 bg-gradient-to-tr from-gold/20 via-amber-600/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="relative w-full max-w-md mx-auto">
+            <div className="relative w-full max-w-[285px] xs:max-w-[315px] sm:max-w-md mx-auto py-8 sm:py-10 lg:py-0">
 
-              {/* FEUILLE VOLANTE 1 (Haut Gauche) - Masquée sur mobile pour éliminer tout débordement */}
-              <div className="hidden lg:block absolute -top-10 -left-6 sm:-left-10 z-20 animate-float-slow w-48 sm:w-56 p-3.5 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform">
-                <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[9px] font-mono text-slate-400">
-                  <div className="flex items-center gap-1.5 text-blue-400 font-bold">
-                    <FileText className="w-3 h-3" />
+              {/* FEUILLE VOLANTE 1 (Haut Gauche) - Facture Chantier */}
+              <div className="absolute -top-7 -left-3 xs:-left-5 sm:-left-8 lg:-top-10 lg:-left-10 z-20 animate-float-slow w-[150px] xs:w-[168px] sm:w-56 p-2.5 sm:p-3.5 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform -rotate-6 hover:rotate-0 transition-transform">
+                <div className="flex items-center justify-between pb-1.5 sm:pb-2 border-b border-white/10 text-[8px] xs:text-[9px] font-mono text-slate-400">
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-blue-400 font-bold">
+                    <FileText className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     <span>FACTURE CHANTIER</span>
                   </div>
                   <span className="text-emerald-400 font-bold">N° 2026-084</span>
                 </div>
-                <div className="py-2 space-y-1 text-[10px]">
+                <div className="py-1.5 sm:py-2 space-y-0.5 sm:space-y-1 text-[9px] xs:text-[10px]">
                   <p className="font-semibold text-white truncate">Villa Duplex R+2</p>
-                  <div className="flex justify-between text-slate-300 font-mono text-[9px]">
+                  <div className="flex justify-between text-slate-300 font-mono text-[8px] xs:text-[9px]">
                     <span>Déboursé sec :</span>
                     <span className="font-bold text-white">2 450 000 F</span>
                   </div>
-                  <div className="flex justify-between text-gold font-mono text-[9px]">
+                  <div className="flex justify-between text-gold font-mono text-[8px] xs:text-[9px]">
                     <span>Acompte 40% :</span>
                     <span className="font-bold">980 000 F ✓</span>
                   </div>
                 </div>
-                <div className="pt-1.5 border-t border-white/5 flex items-center justify-between text-[8px] font-mono text-emerald-400">
+                <div className="pt-1 sm:pt-1.5 border-t border-white/5 flex items-center justify-between text-[7px] xs:text-[8px] font-mono text-emerald-400">
                   <span>ENCAISSÉ MOBILE MONEY</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 </div>
               </div>
 
-              {/* FEUILLE VOLANTE 2 (Haut Droite) - Masquée sur mobile pour éliminer tout débordement */}
-              <div className="hidden lg:block absolute -top-8 -right-4 sm:-right-8 z-20 animate-float-reverse w-48 sm:w-56 p-3.5 rounded-2xl bg-[#161622]/95 border border-gold/30 backdrop-blur-xl shadow-2xl transform rotate-6 hover:rotate-0 transition-transform">
-                <div className="flex items-center justify-between pb-2 border-b border-white/10 text-[9px] font-mono text-slate-400">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                    <FileSpreadsheet className="w-3 h-3" />
+              {/* FEUILLE VOLANTE 2 (Haut Droite) - Calculateur K */}
+              <div className="absolute -top-5 -right-3 xs:-right-5 sm:-right-8 lg:-top-8 lg:-right-8 z-20 animate-float-reverse w-[150px] xs:w-[168px] sm:w-56 p-2.5 sm:p-3.5 rounded-2xl bg-[#161622]/95 border border-gold/30 backdrop-blur-xl shadow-2xl transform rotate-6 hover:rotate-0 transition-transform">
+                <div className="flex items-center justify-between pb-1.5 sm:pb-2 border-b border-white/10 text-[8px] xs:text-[9px] font-mono text-slate-400">
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-emerald-400 font-bold">
+                    <FileSpreadsheet className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                     <span>CALCULATEUR K</span>
                   </div>
                   <span className="text-gold font-bold">EXCEL_EPR</span>
                 </div>
-                <div className="py-2 space-y-1 text-[10px]">
-                  <div className="flex justify-between text-slate-300 font-mono text-[9px]">
+                <div className="py-1.5 sm:py-2 space-y-0.5 sm:space-y-1 text-[9px] xs:text-[10px]">
+                  <div className="flex justify-between text-slate-300 font-mono text-[8px] xs:text-[9px]">
                     <span>Frais Généraux K :</span>
                     <span className="text-gold font-bold">1.38</span>
                   </div>
-                  <div className="flex justify-between text-slate-300 font-mono text-[9px]">
-                    <span>Marge Nette Cible :</span>
+                  <div className="flex justify-between text-slate-300 font-mono text-[8px] xs:text-[9px]">
+                    <span>Marge Nette :</span>
                     <span className="text-emerald-400 font-bold">+24.0%</span>
                   </div>
-                  <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden mt-1">
+                  <div className="h-1 sm:h-1.5 w-full bg-white/10 rounded-full overflow-hidden mt-1">
                     <div className="h-full bg-gradient-to-r from-gold to-emerald-400 w-4/5"></div>
                   </div>
                 </div>
-                <div className="pt-1.5 border-t border-white/5 text-[8px] font-mono text-slate-400 flex justify-between">
+                <div className="pt-1 sm:pt-1.5 border-t border-white/5 text-[7px] xs:text-[8px] font-mono text-slate-400 flex justify-between">
                   <span>0% PERTE DÉTECTÉE</span>
                   <span className="text-gold font-bold">SÉCURISÉ ✓</span>
                 </div>
               </div>
 
               {/* CARTE CENTRALE : Portrait de l'Entrepreneur */}
-              <div className="relative z-10 rounded-[3rem] p-2.5 bg-gradient-to-b from-gold/40 via-white/10 to-transparent border-2 border-gold/30 shadow-2xl shadow-black/80 overflow-hidden group">
-                <div className="relative rounded-[2.5rem] overflow-hidden bg-[#161622] aspect-[4/5] sm:aspect-[3/4]">
+              <div className="relative z-10 rounded-[2.5rem] sm:rounded-[3rem] p-2 sm:p-2.5 bg-gradient-to-b from-gold/40 via-white/10 to-transparent border-2 border-gold/30 shadow-2xl shadow-black/80 overflow-hidden group">
+                <div className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-[#161622] aspect-[4/5] sm:aspect-[3/4]">
                   <img 
                     src="./assets/portrait-electricien-ingenieur-hd.jpg" 
                     alt="Ir. Jean Philippe - Entrepreneur & Ingénieur Méthode EPR" 
@@ -728,75 +728,48 @@ export default function App() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D12] via-[#0D0D12]/20 to-transparent"></div>
                   
-                  <div className="absolute bottom-4 inset-x-4 p-4 rounded-2xl bg-[#0D0D12]/85 backdrop-blur-md border border-white/15 space-y-1 shadow-lg">
+                  <div className="absolute bottom-3 sm:bottom-4 inset-x-2.5 sm:inset-x-4 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl bg-[#0D0D12]/90 backdrop-blur-md border border-white/15 space-y-0.5 sm:space-y-1 shadow-lg">
                     <div className="flex items-center justify-between">
-                      <span className="font-display font-extrabold text-sm sm:text-base text-white">
+                      <span className="font-display font-extrabold text-xs sm:text-base text-white">
                         Ir. Jean Philippe
                       </span>
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/30 font-bold">
+                      <span className="text-[9px] sm:text-[10px] font-mono px-1.5 sm:px-2 py-0.5 rounded-full bg-gold/20 text-gold border border-gold/30 font-bold">
                         Auteur & Consultant
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-300 font-light leading-tight">
+                    <p className="text-[10px] sm:text-[11px] text-slate-300 font-light leading-tight">
                       Praticien terrain, formateur de plus de 500 patrons de PME électricité en Afrique.
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* FEUILLE VOLANTE 3 (Bas Gauche) - Masquée sur mobile pour éliminer tout débordement */}
-              <div className="hidden lg:block absolute -bottom-6 -left-4 sm:-left-8 z-20 animate-float-soft w-48 sm:w-52 p-3 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform">
-                <div className="flex items-center gap-1.5 text-[9px] font-mono text-gold font-bold mb-1">
-                  <ShieldCheck className="w-3 h-3" />
+              {/* FEUILLE VOLANTE 3 (Bas Gauche) - Contrat Sous-Traitance */}
+              <div className="absolute -bottom-5 -left-2 xs:-left-4 sm:-left-6 lg:-bottom-6 lg:-left-8 z-20 animate-float-soft w-[138px] xs:w-[155px] sm:w-52 p-2 sm:p-3 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[8px] xs:text-[9px] font-mono text-gold font-bold mb-0.5 sm:mb-1">
+                  <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   <span>CONTRAT SOUS-TRAITANCE</span>
                 </div>
-                <p className="text-[10px] text-slate-200 font-medium">Article 3 : Avenants Écrits</p>
-                <div className="mt-1 flex items-center justify-between text-[8px] font-mono text-slate-400">
+                <p className="text-[8px] xs:text-[10px] text-slate-200 font-medium truncate">Article 3 : Avenants Écrits</p>
+                <div className="mt-0.5 sm:mt-1 flex items-center justify-between text-[7px] xs:text-[8px] font-mono text-slate-400">
                   <span>Signé & Tamponné</span>
                   <span className="text-emerald-400 font-bold">VALIDE ✓</span>
                 </div>
               </div>
 
-              {/* FEUILLE VOLANTE 4 (Bas Droite) - Masquée sur mobile pour éliminer tout débordement */}
-              <div className="hidden lg:block absolute -bottom-8 -right-4 sm:-right-6 z-20 animate-float-slow w-48 sm:w-56 p-3 rounded-2xl bg-[#1A1A26]/95 border border-gold/40 backdrop-blur-xl shadow-gold-sm transform -rotate-4 hover:rotate-0 transition-transform flex items-center gap-3">
+              {/* FEUILLE VOLANTE 4 (Bas Droite) - Système Complet 65 Outils */}
+              <div className="absolute -bottom-7 -right-2 xs:-right-4 sm:-right-6 lg:-bottom-8 lg:-right-6 z-20 animate-float-slow w-[150px] xs:w-[168px] sm:w-56 p-2 sm:p-3 rounded-2xl bg-[#1A1A26]/95 border border-gold/40 backdrop-blur-xl shadow-gold-sm transform -rotate-4 hover:rotate-0 transition-transform flex items-center gap-2 sm:gap-3">
                 <img 
                   src="./assets/mockup-pack-3d.png" 
                   alt="Pack 3D Méthode EPR" 
-                  className="w-12 h-12 object-contain shrink-0 filter drop-shadow-md"
+                  className="w-9 h-9 xs:w-10 xs:h-10 sm:w-12 sm:h-12 object-contain shrink-0 filter drop-shadow-md"
                 />
-                <div className="space-y-0.5">
-                  <span className="font-mono text-[9px] text-gold font-bold uppercase">Système Complet</span>
-                  <p className="text-[11px] font-display font-extrabold text-white leading-tight">
+                <div className="space-y-0.5 min-w-0">
+                  <span className="font-mono text-[8px] xs:text-[9px] text-gold font-bold uppercase truncate block">Système Complet</span>
+                  <p className="text-[9px] xs:text-[11px] font-display font-extrabold text-white leading-tight truncate">
                     65 Outils Clé en Main
                   </p>
-                  <p className="text-[8px] font-mono text-emerald-400">ZIP Téléchargeable</p>
-                </div>
-              </div>
-
-              {/* BADGES RECADRÉS FLUIDES POUR MOBILE (< 1024px) - 100% dans l'écran, 0 débordement */}
-              <div className="lg:hidden grid grid-cols-2 gap-2.5 mt-4 w-full">
-                <div className="p-3 rounded-2xl bg-[#161622]/95 border border-white/15 backdrop-blur-md flex flex-col justify-between">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
-                    <FileSpreadsheet className="w-3.5 h-3.5" />
-                    <span>CALCULATEUR K</span>
-                  </div>
-                  <div className="mt-1 flex items-baseline justify-between">
-                    <span className="text-[10px] font-mono text-slate-300">Frais K :</span>
-                    <span className="text-xs font-mono font-bold text-gold">1.38</span>
-                  </div>
-                  <span className="text-[9px] font-mono text-emerald-400 mt-0.5">Marge nette +24%</span>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-[#161622]/95 border border-gold/30 backdrop-blur-md flex flex-col justify-between">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-gold font-bold">
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>65 OUTILS INCLUS</span>
-                  </div>
-                  <div className="mt-1 flex items-baseline justify-between">
-                    <span className="text-[10px] font-mono text-slate-300">Pack Pro :</span>
-                    <span className="text-xs font-mono font-bold text-white">ZIP Prêt</span>
-                  </div>
-                  <span className="text-[9px] font-mono text-gold mt-0.5">Excel & Word</span>
+                  <p className="text-[7px] xs:text-[8px] font-mono text-emerald-400">ZIP Téléchargeable</p>
                 </div>
               </div>
 
